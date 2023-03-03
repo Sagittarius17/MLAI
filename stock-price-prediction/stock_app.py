@@ -1,3 +1,4 @@
+import nsepy as nse
 import dash
 from dash import dcc, html
 import pandas as pd
@@ -6,6 +7,7 @@ from dash.dependencies import Input, Output
 from keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+from datetime import date
 
 
 app = dash.Dash()
@@ -13,22 +15,29 @@ server = app.server
 
 scaler = MinMaxScaler(feature_range=(0,1))
 
+company = "ITC"
+start_date = date(2020, 12, 15)
+end_date = date.today()
+# print(end_date)
+
+stock_data = nse.get_history(company, start=start_date, end=end_date)
+
 
 
 df_nse = pd.read_csv("stock-price-prediction/NSE-ITC.csv")
 
-df_nse["Date"] = pd.to_datetime(df_nse.Date,format="%Y-%m-%d")
+df_nse["Date"] = pd.to_datetime(df_nse,format="%Y-%m-%d")
 df_nse.index = df_nse['Date']
 
 
-data=df_nse.sort_index(ascending=True,axis=0)
-new_data=pd.DataFrame(index=range(0,len(df_nse)),columns=['Date','Close'])
+data = df_nse.sort_index(ascending=True,axis=0)
+new_data = pd.DataFrame(index=range(0,len(df_nse)),columns=['Date','Close'])
 
 for i in range(0,len(data)):
     new_data["Date"][i]=data['Date'][i]
     new_data["Close"][i]=data["Close"][i]
 
-new_data.index=new_data.Date
+new_data.index = new_data.Date
 new_data.drop("Date",axis=1,inplace=True)
 
 dataset = new_data.values
@@ -37,15 +46,15 @@ train = dataset[0:987,:]
 valid = dataset[987:,:]
 
 scaler = MinMaxScaler(feature_range=(0,1))
-scaled_data=scaler.fit_transform(dataset)
+scaled_data = scaler.fit_transform(dataset)
 
-x_train,y_train=[],[]
-
+x_train = []
+y_train = []
 for i in range(60,len(train)):
     x_train.append(scaled_data[i-60:i,0])
     y_train.append(scaled_data[i,0])
     
-x_train,y_train=np.array(x_train),np.array(y_train)
+x_train,y_train = np.array(x_train),np.array(y_train)
 
 x_train = np.reshape(x_train,(x_train.shape[0],x_train.shape[1],1))
 
