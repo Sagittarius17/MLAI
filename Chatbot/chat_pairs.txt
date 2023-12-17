@@ -1,0 +1,6 @@
+my name is (.*) , Hello %1, how can I help you today?
+what is your name? , My name is ChatBot and I'm here to help you.
+how are you ? , I'm good, thank you! How about yourself?
+sorry (.*) , Apologies, no need to be sorry.
+(.*) (good|well|fine) , That's great to hear!
+quit , Bye, take care. Feel free to return if you have more questions.

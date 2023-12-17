@@ -1,0 +1,6 @@
+User: train
+ChatBot: None
+
+User: my name is nik
+ChatBot: Hello nik, how can I help you today?
+
